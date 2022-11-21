@@ -6,7 +6,7 @@ import java.util.List;
 public class QuickSelect<T extends Comparable<T>> {
 
   /**
-   * Finds the k-th smallest element within the list. List will be partial sorted by this method.
+   * Finds the k-th smallest element within the list. List will be partially sorted by this method.
    * k is 0 based (i.e. if list is sorted from smallest to largest, what is the value at list.get(k)).
    *
    * @param list
