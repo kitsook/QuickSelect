@@ -1,6 +1,7 @@
 package net.clarenceho.util;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -102,5 +103,54 @@ public class QuickSelectTest {
       int output = qs.findKSmallest(inputList, i);
       Assert.assertEquals((int)comparisonList.get(i), output);
     }
+  }
+
+  /**
+   * Compare the performance of optimized sort vs Quickselect
+   */
+  @Ignore
+  @Test
+  public void comparePerformance() {
+    int total_items = 1_000_000;
+    int list_size = 10000;
+    int trial = total_items / list_size;
+
+    int pos = 5000;
+
+    Random generator = new Random(1337);
+    List<Integer> baseInputList = new ArrayList<>();
+    for (int i = 0; i < list_size; i++) {
+      baseInputList.add(generator.nextInt(5000));
+    }
+
+    List<List<Integer>> sortAndFindInputs = new ArrayList<>();
+    List<List<Integer>> quickSelectInputs = new ArrayList<>();
+    for (int i = 0; i < trial; i++) {
+      sortAndFindInputs.add(new ArrayList<>(baseInputList));
+      quickSelectInputs.add(new ArrayList<>(baseInputList));
+    }
+
+    List<Integer> sortAndFindResults = new ArrayList<>();
+    List<Integer> quickSelectResults = new ArrayList<>();
+
+    long start = System.currentTimeMillis();
+    for (int i = 0; i < trial; i++) {
+      Collections.sort(sortAndFindInputs.get(i));
+      sortAndFindResults.add(sortAndFindInputs.get(i).get(pos));
+    }
+    long end = System.currentTimeMillis();
+    long sortAndFindMs = end - start;
+    System.err.println("Sort and find took " + sortAndFindMs + "ms");
+
+    QuickSelect<Integer> qs = new QuickSelect<>();
+    start = System.currentTimeMillis();
+    for (int i = 0; i < trial; i++) {
+      quickSelectResults.add(qs.findKSmallest(quickSelectInputs.get(i), pos));
+    }
+    end = System.currentTimeMillis();
+    long quickSelectMs = end - start;
+    System.err.println("QuickSelect took " + quickSelectMs + "ms");
+
+    Assert.assertEquals(sortAndFindResults, quickSelectResults);
   }
 }
